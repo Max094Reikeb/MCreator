@@ -1,29 +1,29 @@
 <#--
  # MCreator (https://mcreator.net/)
  # Copyright (C) 2020 Pylo and contributors
- # 
+ #
  # This program is free software: you can redistribute it and/or modify
  # it under the terms of the GNU General Public License as published by
  # the Free Software Foundation, either version 3 of the License, or
  # (at your option) any later version.
- # 
+ #
  # This program is distributed in the hope that it will be useful,
  # but WITHOUT ANY WARRANTY; without even the implied warranty of
  # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  # GNU General Public License for more details.
- # 
+ #
  # You should have received a copy of the GNU General Public License
  # along with this program.  If not, see <https://www.gnu.org/licenses/>.
- # 
+ #
  # Additional permission for code generator templates (*.ftl files)
- # 
- # As a special exception, you may create a larger work that contains part or 
- # all of the MCreator code generator templates (*.ftl files) and distribute 
- # that work under terms of your choice, so long as that work isn't itself a 
- # template for code generation. Alternatively, if you modify or redistribute 
- # the template itself, you may (at your option) remove this special exception, 
- # which will cause the template and the resulting code generator output files 
- # to be licensed under the GNU General Public License without this special 
+ #
+ # As a special exception, you may create a larger work that contains part or
+ # all of the MCreator code generator templates (*.ftl files) and distribute
+ # that work under terms of your choice, so long as that work isn't itself a
+ # template for code generation. Alternatively, if you modify or redistribute
+ # the template itself, you may (at your option) remove this special exception,
+ # which will cause the template and the resulting code generator output files
+ # to be licensed under the GNU General Public License without this special
  # exception.
 -->
 
@@ -184,18 +184,24 @@ public class ${name}Block extends ${JavaModName}Elements.ModElement {
 		</#if>
 
 		<#if data.specialInfo?has_content>
+		<#if data.descriptionLocalized()>
+		@Override
+		public void addInformation(ItemStack itemstack, IBlockReader world, List list, ITooltipFlag flag) {
+			super.addInformation(itemstack, world, list, flag);
+			<#assign line = 0>
+			<#list data.specialInfo as entry>
+			list.add(new TranslationTextComponent("block.${JavaModName?lower_case?replace("mod", "")}.${name?lower_case}.tooltip${line}"));
+			<#assign line++>
+			</#list>
+		}
+		<#else>
 		@Override @OnlyIn(Dist.CLIENT) public void addInformation(ItemStack itemstack, IBlockReader world, List<ITextComponent> list, ITooltipFlag flag) {
 			super.addInformation(itemstack, world, list, flag);
-			<#if data.descriptionLocalized>
-				<#list data.specialInfo as entry>
-				list.add(new TranslationTextComponent("${JavaConventions.escapeStringForJava(entry)}"));
-				</#list>
-			<#else>
-				<#list data.specialInfo as entry>
-				list.add(new StringTextComponent("${JavaConventions.escapeStringForJava(entry)}"));
-				</#list>
-			</#if>
+			<#list data.specialInfo as entry>
+			list.add(new StringTextComponent("${JavaConventions.escapeStringForJava(entry)}"));
+			</#list>
 		}
+		</#if>
 		</#if>
 
 		<#if data.emissiveRendering>
@@ -396,7 +402,7 @@ public class ${name}Block extends ${JavaModName}Elements.ModElement {
         @Override public IFluidState getFluidState(BlockState state) {
             return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
         }
-	
+
 		@Override public BlockState updatePostPlacement(BlockState state, Direction facing, BlockState facingState, IWorld world, BlockPos currentPos, BlockPos facingPos) {
 	        if (state.get(WATERLOGGED)) {
 		        world.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(world));
@@ -693,7 +699,7 @@ public class ${name}Block extends ${JavaModName}Elements.ModElement {
 			@Override public boolean hasTileEntity(BlockState state) {
 				return true;
 			}
-			
+
 			@Override public TileEntity createTileEntity(BlockState state, IBlockReader world) {
     		    return new CustomTileEntity();
     		}
@@ -713,7 +719,7 @@ public class ${name}Block extends ${JavaModName}Elements.ModElement {
    			         InventoryHelper.dropInventoryItems(world, pos, (CustomTileEntity) tileentity);
    			         world.updateComparatorOutputLevel(pos, this);
    			      }
-			
+
    			      super.onReplaced(state, world, pos, newState, isMoving);
    			   }
    			}

@@ -184,6 +184,10 @@ import java.util.Map;
 		return renderType;
 	}
 
+	public boolean descriptionLocalized(){
+		return descriptionLocalized;
+	}
+
 	public boolean hasCustomDrop() {
 		return !customDrop.isEmpty();
 	}

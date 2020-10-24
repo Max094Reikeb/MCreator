@@ -392,17 +392,28 @@ public class Generator implements Closeable {
 						.replace("@modid", workspace.getWorkspaceSettings().getModID())
 						.replace("@registryname", element.getModElement().getRegistryName()));
 				try {
-					String value = (String) element.getClass().getField(mapto.trim()).get(element);
+					int i = 0;
+					for(String value : element.getClass().getField(mapto.trim()).get(element).toString().split(",")){
+						List<String> list = Arrays
+								.asList(element.getClass().getField(mapto.trim()).get(element).toString().split(","));
+						value = list.get(i);
+						if(!value.isEmpty()) {
+							String suffix = (String) ((Map<?, ?>) template).get("suffix");
+							if (suffix != null)
+								value += suffix;
 
-					String suffix = (String) ((Map<?, ?>) template).get("suffix");
-					if (suffix != null)
-						value += suffix;
+							String prefix = (String) ((Map<?, ?>) template).get("prefix");
+							if (prefix != null)
+								value = prefix + value;
+							if (value != null && !value.equals("[]")) {
+								key = key + i;
+								workspace.setLocalization(key, value);
+								i++;
+							}
+						}
+					}
 
-					String prefix = (String) ((Map<?, ?>) template).get("prefix");
-					if (prefix != null)
-						value = prefix + value;
 
-					workspace.setLocalization(key, value);
 				} catch (IllegalAccessException | NoSuchFieldException e) {
 					LOG.error(e.getMessage(), e);
 					LOG.error("[" + generatorName + "] " + e.getMessage());
