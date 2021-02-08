@@ -406,7 +406,7 @@ import net.minecraft.block.material.Material;
 				block == this ||
 			</#if>
 			<#list data.canBePlacedOn as canBePlacedOn>
-				block == ${canBePlacedOn}
+				block == ${mappedBlockToBlockStateCode(canBePlacedOn)}.getBlock()
 				<#if canBePlacedOn?has_next>
 					||
 				</#if>
@@ -436,7 +436,7 @@ import net.minecraft.block.material.Material;
 				block == this ||
 			</#if>
 			<#list data.canBePlacedOn as canBePlacedOn>
-				block == ${canBePlacedOn}
+				block == ${mappedBlockToBlockStateCode(canBePlacedOn)}.getBlock()
 				<#if canBePlacedOn?has_next>
 					||
 				</#if>
